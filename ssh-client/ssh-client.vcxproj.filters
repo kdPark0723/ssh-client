@@ -42,9 +42,6 @@
     <ClInclude Include="DialogInsert.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CDialogTab.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ssh-client.cpp">
@@ -63,9 +60,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="DialogInsert.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CDialogTab.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
