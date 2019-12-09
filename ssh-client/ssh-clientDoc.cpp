@@ -79,7 +79,6 @@ void CsshclientDoc::Serialize(CArchive& ar)
 			CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 			CsshclientView* pView = (CsshclientView*)pFrame -> GetActiveView();
 
-
 			pView->UpdateButtons();
 		}
 	}

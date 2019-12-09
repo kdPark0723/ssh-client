@@ -24,8 +24,9 @@
 IMPLEMENT_DYNCREATE(CsshclientView, CFormView)
 
 BEGIN_MESSAGE_MAP(CsshclientView, CFormView)
-	ON_BN_CLICKED(IDC_BUTTON_KEY, &CsshclientView::OnClickedButtonKey)
+	ON_BN_CLICKED(IDC_BUTTON_KEY, &CsshclientView::OnClickedInsertInfoButton)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_SSH_TAB, &CsshclientView::OnSelchangeSshTab)
+    ON_BN_CLICKED(IDC_CONNECT_SSH_BUTTON, &CsshclientView::OnBnClickedConnectSshButton)
 END_MESSAGE_MAP()
 
 // CsshclientView 생성/소멸
@@ -62,12 +63,6 @@ void CsshclientView::OnInitialUpdate()
 	CFormView::OnInitialUpdate();
 	GetParentFrame()->RecalcLayout();
 	ResizeParentToFit();
-	
-	SetDlgItemText(IDC_STATIC,_T("aa"));
-	//m_ssh_info_list.DeleteAllItems();
-	//m_ssh_info_list.InsertColumn(0, _T("사용자 이름"), LVCFMT_CENTER);
-	//m_ssh_info_list.SetExtendedStyle(m_ssh_info_list.GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
-	
 }
 
 
@@ -127,12 +122,11 @@ CsshclientDoc* CsshclientView::GetDocument() const // 디버그되지 않은 버
 //}
 
 
-void CsshclientView::OnClickedButtonKey()
+void CsshclientView::OnClickedInsertInfoButton()
 {
 	// TODO: Add your control notification handler code here
 	DialogInsert dlg;
 	dlg.DoModal();
-
 }
 
 
@@ -141,21 +135,14 @@ void CsshclientView::UpdateButtons()
 	// TODO: Add your implementation code here.
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 	CsshclientDoc* pDoc = (CsshclientDoc*)pFrame ->GetActiveDocument();
+
 	UpdateData(TRUE);
+
 	m_ssh_info_list.DeleteAllItems();
 	auto nCount{ m_ssh_info_list.GetItemCount() };
 
 	for (auto info : pDoc->m_ssh_infos)
-	{
 		m_ssh_info_list.InsertItem(nCount, info.name);
-	}
-
-	m_ssh_tab.DeleteAllItems();
-	int nTapCount{m_ssh_tab.GetItemCount()};	
-	for (auto info : pDoc->m_ssh_infos)
-	{
-		m_ssh_tab.InsertItem(nTapCount, info.name);
-	}
 
 	UpdateData(FALSE);
 }
@@ -167,7 +154,22 @@ void CsshclientView::OnSelchangeSshTab(NMHDR *pNMHDR, LRESULT *pResult)
 	int nSelection = m_ssh_tab.GetCurSel();
 	//내용 바꾸기
 	
-	
-	
 	*pResult = 0;
+}
+
+
+void CsshclientView::OnBnClickedConnectSshButton()
+{
+    // TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+    CsshclientDoc* pDoc = (CsshclientDoc*)pFrame->GetActiveDocument();
+
+    auto nCount{ m_ssh_info_list.GetItemCount() };
+
+    for (auto i = 0; i < nCount; ++i) {
+        if (m_ssh_info_list.GetItemState(i, LVIS_SELECTED) != 0) {
+            AddSshTab(pDoc->m_ssh_infos[i]);
+        }
+    }
 }

@@ -1,6 +1,6 @@
 ﻿//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by sshclient.rc
+// Microsoft Visual C++에서 생성한 포함 파일입니다.
+// sshclient.rc에서 사용되고 있습니다.
 //
 #define IDD_ABOUTBOX                    100
 #define IDD_SSHCLIENT_FORM              101
@@ -11,7 +11,10 @@
 #define IDD_DIALOG_TAB                  313
 #define IDC_SSH_TAB                     1000
 #define IDC_BUTTON_KEY                  1001
+#define IDC_INSERT_INFO_BUTTON          1001
 #define IDC_BUTTON_INSERT               1002
+#define IDC_BUTTON_KEY2                 1002
+#define IDC_CONNECT_SSH_BUTTON          1002
 #define IDC_IPADDRESS                   1004
 #define IDC_EDIT4                       1006
 #define IDC_EDIT_PORT                   1006

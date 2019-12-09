@@ -58,10 +58,8 @@ void DialogInsert::OnClickedButtonInsert()
 	
 	SshInfo info{cIp, iPort, cUsername, cKey};
 
-	
 	pDoc->m_ssh_infos.push_back(info);
 	pView->UpdateButtons();
-	
 
 	SendMessage(WM_CLOSE,0,0);
 }

@@ -59,10 +59,11 @@ protected:
 public:
     CTabCtrl m_ssh_tab;
 //	afx_msg void OnClickedButtonInsert();
-	afx_msg void OnClickedButtonKey();
+	afx_msg void OnClickedInsertInfoButton();
 	void UpdateButtons();
 	CListCtrl m_ssh_info_list;
 	afx_msg void OnSelchangeSshTab(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnBnClickedConnectSshButton();
 };
 
 #ifndef _DEBUG  // ssh-clientView.cpp의 디버그 버전
