@@ -22,8 +22,4 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnClickedButtonInsert();
-    afx_msg void OnBnClickedFindKeyButton();
-
-private:
-    CString m_keyPath;
 };
