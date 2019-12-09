@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "SshInfo.h"
 
 class CsshclientView : public CFormView
@@ -43,6 +45,10 @@ private:
     int AddSshTab(const SshInfo &info, char *contents = "");
 
     int ChangeSshTab(int tab_id);
+
+private:
+    std::vector<SshInfo> tab_sshInfos;
+    std::vector<SshInfo> tab_contents;
 
 protected:
 
