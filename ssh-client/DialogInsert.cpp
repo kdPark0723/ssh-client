@@ -43,18 +43,25 @@ void DialogInsert::OnClickedButtonInsert()
 	// TODO: Add your control notification handler code here
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 	CsshclientDoc* pDoc = (CsshclientDoc*)pFrame ->GetActiveDocument();
-	CString cUsername,cIp,cKey;
-	int iPort =0;
-	SetDlgItemText(IDC_EDIT_KEY,cKey);
-	SetDlgItemText(IDC_EDIT_USERNAME,cUsername);
-	SetDlgItemText(IDC_IPADDRESS,cIp);
-	SetDlgItemInt(IDC_EDIT_PORT,iPort);
-	pDoc->m_IPort[count]=iPort;
-	pDoc->m_strIp[count] = cIp;
-	pDoc->m_strKey[count] = cKey;
-	pDoc->m_strUsername[count] = cUsername;
-	count++;
+	CsshclientView* pView = (CsshclientView*)pFrame -> GetActiveView();
+
+	CString cUsername, cIp, cKey;
+
+	int iPort{};
+
+	UpdateData(TRUE);
+
+	GetDlgItemText(IDC_EDIT_KEY, cKey);
+	GetDlgItemText(IDC_EDIT_USERNAME, cUsername);
+	GetDlgItemText(IDC_IPADDRESS, cIp);
+	iPort=GetDlgItemInt(IDC_EDIT_PORT);
+	
+	SshInfo info{cIp, iPort, cUsername, cKey};
+
+	
+	pDoc->m_ssh_infos.push_back(info);
+	pView->UpdateButtons();
+	
+
 	SendMessage(WM_CLOSE,0,0);
-
-
 }

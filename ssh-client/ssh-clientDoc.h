@@ -6,6 +6,9 @@
 #pragma once
 
 
+#include <vector>
+#include "SshInfo.h"
+
 class CsshclientDoc : public CDocument
 {
 protected: // serialization에서만 만들어집니다.
@@ -47,9 +50,5 @@ protected:
 #endif // SHARED_HANDLERS
 public:
 
-	int m_IPort[99];
-	CString m_strUsername[99];
-	CString m_strIp[99];
-	CString m_strKey[99];
-	int m_port;
+	std::vector<SshInfo> m_ssh_infos;
 };

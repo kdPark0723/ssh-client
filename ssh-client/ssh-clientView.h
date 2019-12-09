@@ -60,6 +60,9 @@ public:
     CTabCtrl m_ssh_tab;
 //	afx_msg void OnClickedButtonInsert();
 	afx_msg void OnClickedButtonKey();
+	void UpdateButtons();
+	CListCtrl m_ssh_info_list;
+	afx_msg void OnSelchangeSshTab(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 #ifndef _DEBUG  // ssh-clientView.cpp의 디버그 버전

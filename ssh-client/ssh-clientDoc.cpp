@@ -10,6 +10,8 @@
 #endif
 
 #include "ssh-clientDoc.h"
+#include "MainFrm.h"
+#include "ssh-clientView.h"
 
 #include <propkey.h>
 
@@ -28,6 +30,7 @@ END_MESSAGE_MAP()
 // CsshclientDoc 생성/소멸
 
 CsshclientDoc::CsshclientDoc() noexcept
+	: m_ssh_infos{}
 {
 	// TODO: 여기에 일회성 생성 코드를 추가합니다.
 
@@ -57,11 +60,28 @@ void CsshclientDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		// TODO: 여기에 저장 코드를 추가합니다.
+		ar << m_ssh_infos.size();
+		for (auto info : m_ssh_infos)
+			ar << info;
 	}
 	else
 	{
-		// TODO: 여기에 로딩 코드를 추가합니다.
+		m_ssh_infos.clear();
+
+		int size;
+		ar >> size;
+		for (auto i = 0; i < size; ++i)
+		{
+			SshInfo info{};
+			ar >> info;
+			m_ssh_infos.push_back(info);
+
+			CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+			CsshclientView* pView = (CsshclientView*)pFrame -> GetActiveView();
+
+
+			pView->UpdateButtons();
+		}
 	}
 }
 
