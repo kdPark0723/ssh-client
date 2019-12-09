@@ -32,7 +32,6 @@ CsshclientView::CsshclientView() noexcept
     m_tab_contents{}
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
-
 }
 
 CsshclientView::~CsshclientView()
@@ -58,7 +57,6 @@ void CsshclientView::OnInitialUpdate()
 	CFormView::OnInitialUpdate();
 	GetParentFrame()->RecalcLayout();
 	ResizeParentToFit();
-
 }
 
 

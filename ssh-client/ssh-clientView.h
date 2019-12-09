@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include <sstream>
 
 #include "SshInfo.h"
 
@@ -47,8 +48,8 @@ private:
     int ChangeSshTab(int tab_id);
 
 private:
-    std::vector<SshInfo> tab_sshInfos;
-    std::vector<SshInfo> tab_contents;
+    std::vector<SshInfo> m_tab_sshInfos;
+    std::vector<std::stringstream> m_tab_contents;
 
 protected:
 
