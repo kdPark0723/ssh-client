@@ -43,13 +43,15 @@ CsshclientView::CsshclientView() noexcept
     m_ssh_console_in(_T("")),
     m_ssh_console_out(_T("")),
     m_tab_sshInfos{},
-    m_tab_contents{}
+    m_ssh_session{}
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 }
 
 CsshclientView::~CsshclientView()
 {
+    if (m_ssh_session != NULL)
+        ssh_free(m_ssh_session);
 }
 
 void CsshclientView::DoDataExchange(CDataExchange* pDX)
@@ -94,23 +96,34 @@ void CsshclientView::Dump(CDumpContext& dc) const
 int CsshclientView::AddSshTab(const SshInfo &info, char *contents)
 {
     std::stringstream stream;
-    stream << convertCstringToString(info.ip) << ":" << info.port;
+    stream << convertCstringToString(info.name) << "@" << convertCstringToString(info.ip);
 
     auto tab_name{ stream.str() };
     auto tab_name_c{ tab_name.c_str() };
     auto tab_id = m_ssh_tab.GetItemCount();
 	
     m_ssh_tab.InsertItem(tab_id, CString{ tab_name_c });
-    m_ssh_tab.SetCurSel(tab_id);
 
     m_tab_sshInfos.push_back(info);
-    m_tab_contents.push_back(std::stringstream{});
+
+    ChangeSshTab(tab_id);
 
     return tab_id;
 }
 
 int CsshclientView::ChangeSshTab(int tab_id)
 {
+    m_ssh_tab.SetCurSel(tab_id);
+
+    try {
+        if (!InitSshSecction())
+            MessageBox(_T("접속 실패"), _T("실패 경고"), MB_ICONERROR);
+    }
+    catch (const CString &err) {
+        MessageBox(err, _T("실패 경고"), MB_ICONERROR);
+    }
+    
+
     return 0;
 }
 
@@ -122,6 +135,54 @@ void CsshclientView::ClearSshConsole()
     m_ssh_console_in = _T("");
 
     UpdateData(FALSE);
+}
+
+bool CsshclientView::InitSshSecction()
+{
+    auto id{ m_ssh_tab.GetCurSel() };
+
+    if (m_ssh_session != NULL) {
+        ssh_disconnect(m_ssh_session);
+        ssh_free(m_ssh_session);
+    }
+  
+    m_ssh_session = ssh_new();
+    if (m_ssh_session == NULL)
+        return false;
+
+    ssh_options_set(m_ssh_session, SSH_OPTIONS_HOST, convertCstringToString(m_tab_sshInfos[id].ip).c_str());
+    if (!m_tab_sshInfos[id].name.IsEmpty())
+        ssh_options_set(m_ssh_session, SSH_OPTIONS_USER, convertCstringToString(m_tab_sshInfos[id].name).c_str());
+
+    int rc{ ssh_connect(m_ssh_session) };
+    if (rc != SSH_OK) {
+        auto err{ CString(ssh_get_error(m_ssh_session)) };
+
+        ssh_disconnect(m_ssh_session);
+        ssh_free(m_ssh_session);
+        m_ssh_session = NULL;
+
+        throw err;
+    }
+
+    ssh_key key{};
+    ssh_pki_import_privkey_file(convertCstringToString(m_tab_sshInfos[id].key).c_str(), NULL, NULL, NULL, &key);
+    
+    rc = ssh_userauth_try_publickey(m_ssh_session, convertCstringToString(m_tab_sshInfos[id].name).c_str(), key);
+
+    ssh_key_free(key);
+    if (rc != SSH_AUTH_SUCCESS)
+    {
+        auto err{ CString(ssh_get_error(m_ssh_session)) };
+
+        ssh_disconnect(m_ssh_session);
+        ssh_free(m_ssh_session);
+        m_ssh_session = NULL;
+
+        throw err;
+    }
+
+    return true;
 }
 
 CsshclientDoc* CsshclientView::GetDocument() const // 디버그되지 않은 버전은 인라인으로 지정됩니다.
@@ -186,7 +247,7 @@ void CsshclientView::OnBnClickedConnectSshButton()
 
     for (auto i = 0; i < nCount; ++i)
         if (m_ssh_info_list.GetItemState(i, LVIS_SELECTED) != 0)
-            AddSshTab(pDoc->m_ssh_infos[i]);
+            AddSshTab(pDoc->m_ssh_infos[nCount - (i + 1)]);
 }
 
 

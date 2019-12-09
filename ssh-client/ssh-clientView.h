@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include "SshInfo.h"
+#include "libssh/libssh.h"
 
 class CsshclientView : public CFormView
 {
@@ -44,14 +45,15 @@ public:
 
 private:
     int AddSshTab(const SshInfo &info, char *contents = "");
-
     int ChangeSshTab(int tab_id);
-
     void ClearSshConsole();
+
+    bool InitSshSecction();
 
 private:
     std::vector<SshInfo> m_tab_sshInfos;
-    std::vector<std::stringstream> m_tab_contents;
+
+    ssh_session m_ssh_session;
 
 protected:
 
