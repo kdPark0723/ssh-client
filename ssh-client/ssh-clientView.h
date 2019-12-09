@@ -58,6 +58,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
     CTabCtrl m_ssh_tab;
+//	afx_msg void OnClickedButtonInsert();
+	afx_msg void OnClickedButtonKey();
 };
 
 #ifndef _DEBUG  // ssh-clientView.cpp의 디버그 버전

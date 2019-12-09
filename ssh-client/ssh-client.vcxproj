@@ -183,6 +183,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DialogInsert.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ssh-client.h" />
@@ -193,6 +194,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DialogInsert.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="ssh-client.cpp" />
     <ClCompile Include="ssh-clientDoc.cpp" />

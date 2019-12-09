@@ -45,4 +45,11 @@ protected:
 	// 검색 처리기에 대한 검색 콘텐츠를 설정하는 도우미 함수
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+public:
+
+	int m_IPort[99];
+	CString m_strUsername[99];
+	CString m_strIp[99];
+	CString m_strKey[99];
+	int m_port;
 };

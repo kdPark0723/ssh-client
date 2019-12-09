@@ -11,6 +11,7 @@
 
 #include "ssh-clientDoc.h"
 #include "ssh-clientView.h"
+#include "DialogInsert.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,6 +23,7 @@
 IMPLEMENT_DYNCREATE(CsshclientView, CFormView)
 
 BEGIN_MESSAGE_MAP(CsshclientView, CFormView)
+	ON_BN_CLICKED(IDC_BUTTON_KEY, &CsshclientView::OnClickedButtonKey)
 END_MESSAGE_MAP()
 
 // CsshclientView 생성/소멸
@@ -105,3 +107,21 @@ CsshclientDoc* CsshclientView::GetDocument() const // 디버그되지 않은 버
 
 
 // CsshclientView 메시지 처리기
+
+
+//void CsshclientView::OnClickedButtonInsert()
+//{
+//	// TODO: Add your control notification handler code here
+//	DialogInsert dlg;
+//	dlg.DoModal();
+//
+//}
+
+
+void CsshclientView::OnClickedButtonKey()
+{
+	// TODO: Add your control notification handler code here
+	DialogInsert dlg;
+	dlg.DoModal();
+
+}
