@@ -44,7 +44,7 @@ public:
 #endif
 
 private:
-    int AddSshTab(const SshInfo &info, char *contents = "");
+    int AddSshTab(const SshInfo &info, const char *contents = "");
     int ChangeSshTab(int tab_id);
     void ClearSshConsole();
 

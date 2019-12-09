@@ -2,6 +2,10 @@
 // ssh-clientView.cpp: CsshclientView 클래스의 구현
 //
 
+#include <cerrno>
+#include <cstring>
+#include <sstream>
+
 #include "stdafx.h"
 // SHARED_HANDLERS는 미리 보기, 축소판 그림 및 검색 필터 처리기를 구현하는 ATL 프로젝트에서 정의할 수 있으며
 // 해당 프로젝트와 문서 코드를 공유하도록 해 줍니다.
@@ -12,6 +16,7 @@
 #include "ssh-clientDoc.h"
 #include "ssh-clientView.h"
 #include "DialogInsert.h"
+#include "InputPassword.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -31,9 +36,115 @@ END_MESSAGE_MAP()
 
 
 std::string convertCstringToString(const CString &cstring) {
-    CT2CA pszConvertedAnsiString(cstring);
+    CT2CA pszConvertedAnsiString{ cstring };
 
     return std::string{ pszConvertedAnsiString };
+}
+
+int verify_knownhost(ssh_session session)
+{
+    enum ssh_known_hosts_e state;
+    unsigned char *hash = NULL;
+    ssh_key srv_pubkey = NULL;
+    size_t hlen;
+    char buf[10];
+    char *hexa;
+    char *p;
+    int cmp;
+    int rc;
+    rc = ssh_get_server_publickey(session, &srv_pubkey);
+    if (rc < 0) {
+        return -1;
+    }
+    rc = ssh_get_publickey_hash(srv_pubkey,
+        SSH_PUBLICKEY_HASH_SHA1,
+        &hash,
+        &hlen);
+    ssh_key_free(srv_pubkey);
+    if (rc < 0) {
+        return -1;
+    }
+    state = ssh_session_is_known_server(session);
+    switch (state) {
+    case SSH_KNOWN_HOSTS_OK:
+        /* OK */
+        break;
+    case SSH_KNOWN_HOSTS_CHANGED:
+        ssh_clean_pubkey_hash(&hash);
+        return -1;
+    case SSH_KNOWN_HOSTS_OTHER:
+        ssh_clean_pubkey_hash(&hash);
+        return -1;
+    case SSH_KNOWN_HOSTS_NOT_FOUND:
+    case SSH_KNOWN_HOSTS_UNKNOWN:
+        hexa = ssh_get_hexa(hash, hlen);
+        ssh_string_free_char(hexa);
+        ssh_clean_pubkey_hash(&hash);
+        p = fgets(buf, sizeof(buf), stdin);
+        if (p == NULL) {
+            return -1;
+        }
+        cmp = std::strncmp(buf, "yes", 3);
+        if (cmp != 0) {
+            return -1;
+        }
+        rc = ssh_session_update_known_hosts(session);
+        if (rc < 0) {
+            return -1;
+        }
+        break;
+    case SSH_KNOWN_HOSTS_ERROR:
+        ssh_clean_pubkey_hash(&hash);
+        return -1;
+    }
+    ssh_clean_pubkey_hash(&hash);
+    return 0;
+}
+
+CString run_command(ssh_session session, const CString &command)
+{
+    ssh_channel channel;
+    int rc;
+    char buffer[256];
+    int nbytes;
+    channel = ssh_channel_new(session);
+    if (channel == NULL)
+        throw _T("channel == NULL");
+
+    rc = ssh_channel_open_session(channel);
+    if (rc != SSH_OK)
+    {
+        ssh_channel_free(channel);
+        throw _T("rc != SSH_OK");
+    }
+    rc = ssh_channel_request_exec(channel, CT2CA{ command });
+    if (rc != SSH_OK)
+    {
+        ssh_channel_close(channel);
+        ssh_channel_free(channel);
+        throw _T("rc != SSH_OK");
+    }
+
+    std::stringstream ss{};
+    nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+    while (nbytes > 0)
+    {
+        for (auto i = 0; i < nbytes; ++i) 
+            ss << buffer[i];
+        nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+    }
+    if (nbytes < 0)
+    {
+        ssh_channel_close(channel);
+        ssh_channel_free(channel);
+        throw _T("nbytes < 0");
+    }
+
+    ssh_channel_send_eof(channel);
+    ssh_channel_close(channel);
+    ssh_channel_free(channel);
+
+    return CString{ ss.str().c_str() };
 }
 
 // CsshclientView 생성/소멸
@@ -93,7 +204,7 @@ void CsshclientView::Dump(CDumpContext& dc) const
 	CFormView::Dump(dc);
 }
 
-int CsshclientView::AddSshTab(const SshInfo &info, char *contents)
+int CsshclientView::AddSshTab(const SshInfo &info, const char *contents)
 {
     std::stringstream stream;
     stream << convertCstringToString(info.name) << "@" << convertCstringToString(info.ip);
@@ -122,7 +233,6 @@ int CsshclientView::ChangeSshTab(int tab_id)
     catch (const CString &err) {
         MessageBox(err, _T("실패 경고"), MB_ICONERROR);
     }
-    
 
     return 0;
 }
@@ -150,9 +260,9 @@ bool CsshclientView::InitSshSecction()
     if (m_ssh_session == NULL)
         return false;
 
-    ssh_options_set(m_ssh_session, SSH_OPTIONS_HOST, convertCstringToString(m_tab_sshInfos[id].ip).c_str());
+    ssh_options_set(m_ssh_session, SSH_OPTIONS_HOST, CT2CA{ m_tab_sshInfos[id].ip });
     if (!m_tab_sshInfos[id].name.IsEmpty())
-        ssh_options_set(m_ssh_session, SSH_OPTIONS_USER, convertCstringToString(m_tab_sshInfos[id].name).c_str());
+        ssh_options_set(m_ssh_session, SSH_OPTIONS_USER, CT2CA{ m_tab_sshInfos[id].name });
 
     int rc{ ssh_connect(m_ssh_session) };
     if (rc != SSH_OK) {
@@ -165,12 +275,18 @@ bool CsshclientView::InitSshSecction()
         throw err;
     }
 
-    ssh_key key{};
-    ssh_pki_import_privkey_file(convertCstringToString(m_tab_sshInfos[id].key).c_str(), NULL, NULL, NULL, &key);
-    
-    rc = ssh_userauth_try_publickey(m_ssh_session, convertCstringToString(m_tab_sshInfos[id].name).c_str(), key);
+    if (verify_knownhost(m_ssh_session) < 0)
+    {
+        ssh_disconnect(m_ssh_session);
+        ssh_free(m_ssh_session);
+        
+        return false;
+    }
 
-    ssh_key_free(key);
+    InputPassword dlg;
+    dlg.DoModal();
+
+    rc = ssh_userauth_password(m_ssh_session, NULL, CT2CA{ dlg.m_password });
     if (rc != SSH_AUTH_SUCCESS)
     {
         auto err{ CString(ssh_get_error(m_ssh_session)) };
@@ -256,7 +372,7 @@ void CsshclientView::OnBnClickedSshInputButton()
     // TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
     UpdateData(TRUE);
 
-    m_ssh_console_out = m_ssh_console_in;
+    m_ssh_console_out = run_command(m_ssh_session, m_ssh_console_in);
     m_ssh_console_in = _T("");
 
     UpdateData(FALSE);
