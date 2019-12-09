@@ -47,6 +47,8 @@ private:
 
     int ChangeSshTab(int tab_id);
 
+    void ClearSshConsole();
+
 private:
     std::vector<SshInfo> m_tab_sshInfos;
     std::vector<std::stringstream> m_tab_contents;
@@ -58,12 +60,16 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
     CTabCtrl m_ssh_tab;
+    CListCtrl m_ssh_info_list;
+    CString m_ssh_console_out;
+
 //	afx_msg void OnClickedButtonInsert();
 	afx_msg void OnClickedInsertInfoButton();
 	void UpdateButtons();
-	CListCtrl m_ssh_info_list;
 	afx_msg void OnSelchangeSshTab(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnBnClickedConnectSshButton();
+    CString m_ssh_console_in;
+    afx_msg void OnBnClickedSshInputButton();
 };
 
 #ifndef _DEBUG  // ssh-clientView.cpp의 디버그 버전
