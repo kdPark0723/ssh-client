@@ -22,7 +22,6 @@
 #define new DEBUG_NEW
 #endif
 
-
 // CsshclientView
 
 IMPLEMENT_DYNCREATE(CsshclientView, CFormView)
@@ -101,7 +100,7 @@ int verify_knownhost(ssh_session session)
     return 0;
 }
 
-CString run_command(ssh_session session, const CString &command)
+CString RunCommand(ssh_session session, const CString &command)
 {
     ssh_channel channel;
     int rc;
@@ -256,11 +255,12 @@ bool CsshclientView::InitSshSecction()
         ssh_free(m_ssh_session);
     }
   
-    m_ssh_session = ssh_new();
+    ssh_session m_ssh_session = ssh_new();
     if (m_ssh_session == NULL)
         return false;
 
     ssh_options_set(m_ssh_session, SSH_OPTIONS_HOST, CT2CA{ m_tab_sshInfos[id].ip });
+
     if (!m_tab_sshInfos[id].name.IsEmpty())
         ssh_options_set(m_ssh_session, SSH_OPTIONS_USER, CT2CA{ m_tab_sshInfos[id].name });
 
@@ -372,7 +372,7 @@ void CsshclientView::OnBnClickedSshInputButton()
     // TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
     UpdateData(TRUE);
 
-    m_ssh_console_out = run_command(m_ssh_session, m_ssh_console_in);
+    m_ssh_console_out = RunCommand(m_ssh_session, m_ssh_console_in);
     m_ssh_console_in = _T("");
 
     UpdateData(FALSE);
