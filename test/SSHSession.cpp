@@ -161,5 +161,5 @@ void SSHSession::throwErrorIfNotOk(int code, const std::string & message) {
 
 void SSHSession::throwError(const std::string & message)
 {
-    throw SSHSesstionException(std::string{ "SSHSession: " } +message);
+    throw SSHSesstionException(std::string{ "SSHSession: " } + message);
 }
