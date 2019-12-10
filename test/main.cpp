@@ -7,8 +7,9 @@ int main() {
         SSHSession session{ SSHInfo{"localhost"} };
 
         session.connect();
+        session.verifyKnownhost();
     } catch (const std::runtime_error &error) {
-        std::cout << error.what();
+        std::cerr << error.what();
     }
 
     return 0;

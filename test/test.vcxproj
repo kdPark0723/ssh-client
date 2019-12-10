@@ -125,12 +125,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CantCreateSSHSesstionException.cpp" />
+    <ClCompile Include="SSHSesstionException.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SSHSession.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CantCreateSSHSesstionException.h" />
+    <ClInclude Include="SSHSesstionException.h" />
     <ClInclude Include="SSHInfo.h" />
     <ClInclude Include="SSHSession.h" />
   </ItemGroup>
