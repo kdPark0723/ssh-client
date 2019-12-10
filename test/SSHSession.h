@@ -3,8 +3,7 @@
 #include <libssh/libssh.h>
 #include "SSHInfo.h"
 
-class SSHSession
-{
+class SSHSession {
 public:
     SSHSession(const SSHInfo &info);
     ~SSHSession() noexcept;

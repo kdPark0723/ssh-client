@@ -2,8 +2,7 @@
 
 #include <string>
 
-struct SSHInfo
-{
+struct SSHInfo {
     std::string host{ "" };
     unsigned int port{ 22 };
     std::string user{ "" };
