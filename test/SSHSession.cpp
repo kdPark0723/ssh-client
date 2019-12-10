@@ -22,14 +22,14 @@ SSHSession::SSHSession(const SSHInfo &info)
     if (session == nullptr)
         throw SSHSesstionException("Session should not null");
     
-    setOption(SSH_OPTIONS_HOST, info.host.c_str());
-    setOption(SSH_OPTIONS_PORT, &info.port);
+    setHostOption(info.host);
+    setPortOption(info.port);
 
     // 오류 발생 지점
     setOption(SSH_OPTIONS_SSH_DIR, nullptr);
 
     if (!info.user.empty())
-        setOption(SSH_OPTIONS_USER, info.user.c_str());
+        setUserOption(info.user);
 }
 
 SSHSession::~SSHSession() noexcept {
@@ -40,6 +40,19 @@ SSHSession::~SSHSession() noexcept {
 void SSHSession::free() noexcept {
     if (session != nullptr)
         ssh_free(session);
+    session = nullptr;
+}
+
+void SSHSession::setHostOption(const std::string & host) {
+    setOption(SSH_OPTIONS_HOST, host.c_str());
+}
+
+void SSHSession::setPortOption(unsigned int port) {
+    setOption(SSH_OPTIONS_PORT, &port);
+}
+
+void SSHSession::setUserOption(const std::string & user) {
+    setOption(SSH_OPTIONS_USER, user.c_str());
 }
 
 void SSHSession::setOption(ssh_options_e type, const void * value) {

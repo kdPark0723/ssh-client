@@ -1,6 +1,7 @@
 #pragma once
 
 #include <libssh/libssh.h>
+#include <string>
 #include "SSHInfo.h"
 
 class SSHSession {
@@ -10,6 +11,9 @@ public:
 
     void free() noexcept;
 
+    void setHostOption(const std::string &host);
+    void setPortOption(unsigned int port);
+    void setUserOption(const std::string &user);
     void setOption(enum ssh_options_e type, const void *value);
 
     void connect();
