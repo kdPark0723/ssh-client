@@ -9,8 +9,6 @@ public:
     SSHSession(const SSHInfo &info);
     ~SSHSession() noexcept;
 
-    void free() noexcept;
-
     void setHostOption(const std::string &host);
     void setPortOption(unsigned int port);
     void setUserOption(const std::string &user);
@@ -21,6 +19,9 @@ public:
 
     void verifyKnownhost();
 private:
+    void init();
+    void free() noexcept;
+
     void throwErrorIfNotOk(int code);
     void throwErrorIfNotOk(int code, const std::string &message);
     void throwError(const std::string &message);

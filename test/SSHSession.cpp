@@ -17,10 +17,10 @@ void processKnownHostsChanged(unsigned char *hash, size_t hlen) {
 }
 
 SSHSession::SSHSession(const SSHInfo &info)
-    : session{ ssh_new() },
+    : session{ nullptr },
     is_connecting{ false } {
-    if (session == nullptr)
-        throw SSHSesstionException("Session should not null");
+
+    init();
     
     setHostOption(info.host);
     setPortOption(info.port);
@@ -35,6 +35,14 @@ SSHSession::SSHSession(const SSHInfo &info)
 SSHSession::~SSHSession() noexcept {
     disconnect();
     free();
+}
+
+void SSHSession::init() {
+    if (session == nullptr)
+        session = ssh_new();
+
+    if (session == nullptr)
+        throwError("Fail to create session");
 }
 
 void SSHSession::free() noexcept {
