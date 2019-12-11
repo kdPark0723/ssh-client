@@ -11,7 +11,7 @@ public:
     void open();
     void close() noexcept;
 
-    std::string getReuestResult(const std::string &request);
+    std::string reuestAndGetResult(const std::string &request);
     void requestExec(const std::string &request);
     std::string read();
     void sendEof();

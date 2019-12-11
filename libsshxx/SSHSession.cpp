@@ -26,7 +26,7 @@ SSHSession::SSHSession(const SSHInfo &info)
     setPortOption(info.port);
 
     // 오류 발생 지점
-    setOption(SSH_OPTIONS_SSH_DIR, nullptr);
+    // setOption(SSH_OPTIONS_SSH_DIR, nullptr);
 
     if (!info.user.empty())
         setUserOption(info.user);
