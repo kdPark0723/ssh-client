@@ -16,6 +16,9 @@ public:
     void setHostOption(const std::string &host);
     void setPortOption(unsigned int port);
     void setUserOption(const std::string &user);
+    void setSSHDIrOptionDefault();
+    void setSSHDIrOption(const std::string &dir);
+
     void setOption(enum ssh_options_e type, const void *value);
 
     void connect();

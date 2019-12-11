@@ -11,7 +11,14 @@ int main() {
         std::string host{};
         std::cin >> host;
 
-        SSHSession session{ SSHInfo{host} };
+        std::cout << "Input username: ";
+        std::string username{};
+        std::cin >> username;
+
+        SSHSession session{ SSHInfo{host, 22, username} };
+
+        // 오류 발생 지점
+        session.setSSHDIrOptionDefault();
 
         session.connect();
         session.verifyKnownhost();

@@ -26,7 +26,7 @@ SSHSession::SSHSession(const SSHInfo &info)
     setPortOption(info.port);
 
     // 오류 발생 지점
-    // setOption(SSH_OPTIONS_SSH_DIR, nullptr);
+    // setSSHDIrOptionDefault();
 
     if (!info.user.empty())
         setUserOption(info.user);
@@ -103,6 +103,14 @@ void SSHSession::setPortOption(unsigned int port) {
 
 void SSHSession::setUserOption(const std::string & user) {
     setOption(SSH_OPTIONS_USER, user.c_str());
+}
+
+void SSHSession::setSSHDIrOptionDefault() {
+    setOption(SSH_OPTIONS_SSH_DIR, nullptr);
+}
+
+void SSHSession::setSSHDIrOption(const std::string & dir) {
+    setOption(SSH_OPTIONS_SSH_DIR, dir.c_str());
 }
 
 void SSHSession::setOption(ssh_options_e type, const void * value) {
