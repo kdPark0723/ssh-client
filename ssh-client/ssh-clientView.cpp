@@ -192,18 +192,21 @@ void CsshclientView::UpdateButtons()
     ClearSshConsole();
 }
 
-
 void CsshclientView::OnSelchangeSshTab(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	// TODO: Add your control notification handler code here
 	int id = m_ssh_tab.GetCurSel();
 	//내용 바꾸기
 	
-    ChangeSshTab(id);
+    try {
+        ChangeSshTab(id);
+    }
+    catch (const SSHException &err) {
+        MessageBox(CString{ err.what() }, _T("실패 경고"), MB_ICONERROR);
+    }
 
 	*pResult = 0;
 }
-
 
 void CsshclientView::OnBnClickedConnectSshButton()
 {
@@ -225,11 +228,16 @@ void CsshclientView::OnBnClickedSshInputButton()
     // TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
     UpdateData(TRUE);
 
-    SSHChanner channer{ *m_ssh_session };
-    channer.open();
+    try {
+        SSHChanner channer{ *m_ssh_session };
+        channer.open();
 
-    m_ssh_console_out = CString{ channer.reuestAndGetResult(convertCstringToString(m_ssh_console_in)).c_str() };
-    m_ssh_console_in = _T("");
+        m_ssh_console_out = CString{ channer.reuestAndGetResult(convertCstringToString(m_ssh_console_in)).c_str() };
+        m_ssh_console_in = _T("");
+    }
+    catch (const SSHException &err) {
+        MessageBox(CString{ err.what() }, _T("실패 경고"), MB_ICONERROR);
+    }
 
     UpdateData(FALSE);
 }

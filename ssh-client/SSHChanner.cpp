@@ -70,7 +70,7 @@ void SSHChanner::init(const SSHSession & session) {
         channel = ssh_channel_new(session.getInternal());
 
     if (channel == nullptr)
-        throwError("Fail to create session");
+        throwError("Fail to create channer");
 }
 
 void SSHChanner::free() noexcept {
