@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "SSHChanner.h"
-
 #include <sstream>
 
 SSHChanner::SSHChanner(const SSHSession & session)

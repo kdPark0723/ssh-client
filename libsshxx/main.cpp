@@ -30,6 +30,7 @@ int main() {
         session.userauthPassword(password);
 
         SSHChanner channer{ session };
+        channer.open();
 
         std::cout << "Input request: ";
         std::string request{};

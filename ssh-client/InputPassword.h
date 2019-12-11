@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-
 // InputPassword 대화 상자
 
 class InputPassword : public CDialogEx

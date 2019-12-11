@@ -32,4 +32,6 @@ SSHHashKey SSHKey::hash()
     }
 
     SSHObject::throwError("Unsupport function");
+
+    return SSHHashKey{ nullptr, 0, false };
 }

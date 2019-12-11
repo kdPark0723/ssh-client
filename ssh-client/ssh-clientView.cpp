@@ -17,6 +17,8 @@
 #include "ssh-clientView.h"
 #include "DialogInsert.h"
 #include "InputPassword.h"
+#include "SSHException.h"
+#include "util.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -32,13 +34,6 @@ BEGIN_MESSAGE_MAP(CsshclientView, CFormView)
     ON_BN_CLICKED(IDC_CONNECT_SSH_BUTTON, &CsshclientView::OnBnClickedConnectSshButton)
     ON_BN_CLICKED(IDC_SSH_INPUT_BUTTON, &CsshclientView::OnBnClickedSshInputButton)
 END_MESSAGE_MAP()
-
-
-std::string convertCstringToString(const CString &cstring) {
-    CT2CA pszConvertedAnsiString{ cstring };
-
-    return std::string{ pszConvertedAnsiString };
-}
 
 // CsshclientView 생성/소멸
 
@@ -122,8 +117,8 @@ int CsshclientView::ChangeSshTab(int tab_id)
         if (!InitSshSecction())
             MessageBox(_T("접속 실패"), _T("실패 경고"), MB_ICONERROR);
     }
-    catch (const CString &err) {
-        MessageBox(err, _T("실패 경고"), MB_ICONERROR);
+    catch (const SSHException &err) {
+        MessageBox(CString{ err.what() }, _T("실패 경고"), MB_ICONERROR);
     }
 
     return 0;
@@ -146,6 +141,9 @@ bool CsshclientView::InitSshSecction()
     delete m_ssh_session;
 
     m_ssh_session = new SSHSession{ m_tab_sshInfos[id] };
+
+    m_ssh_session->connect();
+    m_ssh_session->verifyKnownhost();
 
     InputPassword dlg;
     dlg.DoModal();
@@ -198,10 +196,10 @@ void CsshclientView::UpdateButtons()
 void CsshclientView::OnSelchangeSshTab(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	// TODO: Add your control notification handler code here
-	int nSelection = m_ssh_tab.GetCurSel();
+	int id = m_ssh_tab.GetCurSel();
 	//내용 바꾸기
 	
-    ClearSshConsole();
+    ChangeSshTab(id);
 
 	*pResult = 0;
 }
@@ -228,6 +226,7 @@ void CsshclientView::OnBnClickedSshInputButton()
     UpdateData(TRUE);
 
     SSHChanner channer{ *m_ssh_session };
+    channer.open();
 
     m_ssh_console_out = CString{ channer.reuestAndGetResult(convertCstringToString(m_ssh_console_in)).c_str() };
     m_ssh_console_in = _T("");

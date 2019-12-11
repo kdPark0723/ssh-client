@@ -1,6 +1,5 @@
 #pragma once
 
-
 // DialogInsert dialog
 
 class DialogInsert : public CDialogEx

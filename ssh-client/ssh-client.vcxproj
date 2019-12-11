@@ -208,6 +208,7 @@
     <ClInclude Include="SSHSesstionException.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DialogInsert.cpp" />
@@ -223,6 +224,7 @@
     <ClCompile Include="SSHHaxa.cpp" />
     <ClCompile Include="SSHKey.cpp" />
     <ClCompile Include="SSHKeyContent.cpp" />
+    <ClCompile Include="SSHKeyFactory.cpp" />
     <ClCompile Include="SSHObject.cpp" />
     <ClCompile Include="SSHSession.cpp" />
     <ClCompile Include="SSHSesstionException.cpp" />
@@ -232,6 +234,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="sshclient.rc" />

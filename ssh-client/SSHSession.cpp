@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "stdafx.h"
 #include "SSHSession.h"
 #include "SSHSesstionException.h"
 #include "SSHKeyFactory.h"
@@ -25,9 +26,6 @@ SSHSession::SSHSession(const SSHInfo &info)
     
     setHostOption(info.host);
     setPortOption(info.port);
-
-    // 오류 발생 지점
-    // setSSHDIrOptionDefault();
 
     if (!info.user.empty())
         setUserOption(info.user);

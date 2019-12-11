@@ -12,6 +12,7 @@
 #include "ssh-clientDoc.h"
 #include "MainFrm.h"
 #include "ssh-clientView.h"
+#include "util.h"
 
 #include <propkey.h>
 
@@ -25,12 +26,6 @@ IMPLEMENT_DYNCREATE(CsshclientDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CsshclientDoc, CDocument)
 END_MESSAGE_MAP()
-
-std::string convertCstringToString(const CString &cstring) {
-    CT2CA pszConvertedAnsiString{ cstring };
-
-    return std::string{ pszConvertedAnsiString };
-}
 
 CArchive& operator<<(CArchive& ar, const SSHInfo &info) {
     ar << CString{ info.host.c_str() } << info.port << CString{ info.user.c_str() };

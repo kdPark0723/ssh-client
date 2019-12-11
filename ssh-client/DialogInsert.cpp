@@ -8,13 +8,7 @@
 #include "MainFrm.h"
 #include "ssh-clientDoc.h"
 #include "ssh-clientView.h"
-
-
-std::string convertCstringToString(const CString &cstring) {
-    CT2CA pszConvertedAnsiString{ cstring };
-
-    return std::string{ pszConvertedAnsiString };
-}
+#include "util.h"
 
 // DialogInsert dialog
 
