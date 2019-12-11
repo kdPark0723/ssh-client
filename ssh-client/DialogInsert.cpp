@@ -10,6 +10,12 @@
 #include "ssh-clientView.h"
 
 
+std::string convertCstringToString(const CString &cstring) {
+    CT2CA pszConvertedAnsiString{ cstring };
+
+    return std::string{ pszConvertedAnsiString };
+}
+
 // DialogInsert dialog
 
 IMPLEMENT_DYNAMIC(DialogInsert, CDialogEx)
@@ -54,7 +60,7 @@ void DialogInsert::OnClickedButtonInsert()
 	GetDlgItemText(IDC_EDIT_USERNAME, cUsername);
 	GetDlgItemText(IDC_EDIT_IP, cIp);
 	
-	SshInfo info{cIp, cUsername};
+	SSHInfo info{ convertCstringToString(cIp), 22, convertCstringToString(cUsername) };
 
 	pDoc->m_ssh_infos.push_back(info);
 	pView->UpdateButtons();

@@ -26,6 +26,29 @@ IMPLEMENT_DYNCREATE(CsshclientDoc, CDocument)
 BEGIN_MESSAGE_MAP(CsshclientDoc, CDocument)
 END_MESSAGE_MAP()
 
+std::string convertCstringToString(const CString &cstring) {
+    CT2CA pszConvertedAnsiString{ cstring };
+
+    return std::string{ pszConvertedAnsiString };
+}
+
+CArchive& operator<<(CArchive& ar, const SSHInfo &info) {
+    ar << CString{ info.host.c_str() } << info.port << CString{ info.user.c_str() };
+
+    return ar;
+}
+
+CArchive& operator>>(CArchive& ar, SSHInfo &info) {
+    CString host{};
+    CString user{};
+
+    ar >> host >> info.port >> user;
+
+    info.host = convertCstringToString(host);
+    info.user = convertCstringToString(user);
+
+    return ar;
+}
 
 // CsshclientDoc 생성/소멸
 
@@ -51,9 +74,6 @@ BOOL CsshclientDoc::OnNewDocument()
 	return TRUE;
 }
 
-
-
-
 // CsshclientDoc serialization
 
 void CsshclientDoc::Serialize(CArchive& ar)
@@ -72,7 +92,7 @@ void CsshclientDoc::Serialize(CArchive& ar)
 		ar >> size;
 		for (auto i = 0; i < size; ++i)
 		{
-			SshInfo info{};
+			SSHInfo info{};
 			ar >> info;
 			m_ssh_infos.push_back(info);
 

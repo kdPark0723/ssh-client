@@ -7,7 +7,7 @@
 
 
 #include <vector>
-#include "SshInfo.h"
+#include "SSHInfo.h"
 
 class CsshclientDoc : public CDocument
 {
@@ -50,5 +50,5 @@ protected:
 #endif // SHARED_HANDLERS
 public:
 
-	std::vector<SshInfo> m_ssh_infos;
+	std::vector<SSHInfo> m_ssh_infos;
 };

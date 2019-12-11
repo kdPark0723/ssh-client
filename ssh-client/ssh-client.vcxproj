@@ -194,7 +194,18 @@
     <ClInclude Include="ssh-client.h" />
     <ClInclude Include="ssh-clientDoc.h" />
     <ClInclude Include="ssh-clientView.h" />
-    <ClInclude Include="SshInfo.h" />
+    <ClInclude Include="SSHChanner.h" />
+    <ClInclude Include="SSHException.h" />
+    <ClInclude Include="SSHHashKey.h" />
+    <ClInclude Include="SSHHashKeyContent.h" />
+    <ClInclude Include="SSHHaxa.h" />
+    <ClInclude Include="SSHInfo.h" />
+    <ClInclude Include="SSHKey.h" />
+    <ClInclude Include="SSHKeyContent.h" />
+    <ClInclude Include="SSHKeyFactory.h" />
+    <ClInclude Include="SSHObject.h" />
+    <ClInclude Include="SSHSession.h" />
+    <ClInclude Include="SSHSesstionException.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -205,6 +216,16 @@
     <ClCompile Include="ssh-client.cpp" />
     <ClCompile Include="ssh-clientDoc.cpp" />
     <ClCompile Include="ssh-clientView.cpp" />
+    <ClCompile Include="SSHChanner.cpp" />
+    <ClCompile Include="SSHException.cpp" />
+    <ClCompile Include="SSHHashKey.cpp" />
+    <ClCompile Include="SSHHashKeyContent.cpp" />
+    <ClCompile Include="SSHHaxa.cpp" />
+    <ClCompile Include="SSHKey.cpp" />
+    <ClCompile Include="SSHKeyContent.cpp" />
+    <ClCompile Include="SSHObject.cpp" />
+    <ClCompile Include="SSHSession.cpp" />
+    <ClCompile Include="SSHSesstionException.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -7,8 +7,9 @@
 #include <vector>
 #include <sstream>
 
-#include "SshInfo.h"
-#include "libssh/libssh.h"
+#include "SSHInfo.h"
+#include "SSHSession.h"
+#include "SSHChanner.h"
 
 class CsshclientView : public CFormView
 {
@@ -44,16 +45,16 @@ public:
 #endif
 
 private:
-    int AddSshTab(const SshInfo &info, const char *contents = "");
+    int AddSshTab(const SSHInfo &info, const char *contents = "");
     int ChangeSshTab(int tab_id);
     void ClearSshConsole();
 
     bool InitSshSecction();
 
 private:
-    std::vector<SshInfo> m_tab_sshInfos;
+    std::vector<SSHInfo> m_tab_sshInfos;
 
-    ssh_session m_ssh_session;
+    SSHSession *m_ssh_session;
 
 protected:
 

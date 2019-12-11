@@ -1,21 +1,10 @@
 #pragma once
 
-#include "stdafx.h"
+#include <string>
 
-struct SshInfo
-{
-    CString ip;
-    CString name;
+struct SSHInfo {
+    std::string host{ "" };
+    unsigned int port{ 22 };
+    std::string user{ "" };
 };
 
-inline CArchive& operator<<(CArchive& ar, const SshInfo info) {
-	ar << info.ip << info.name;
-
-	return ar;
-}
-
-inline CArchive& operator>>(CArchive& ar, SshInfo info) {
-	ar >> info.ip >> info.name;
-
-	return ar;
-}
