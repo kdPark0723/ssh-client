@@ -27,7 +27,7 @@ void SSHChanner::close() noexcept {
     is_open = false;
 }
 
-std::string SSHChanner::reuestAndGetResult(const std::string & request)
+std::string SSHChanner::requestAndGetResult(const std::string & request)
 {
     requestExec(request);
 
