@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
+
 #include "SSHSession.h"
+#include "SSHException.h"
 
 int main() {
     try {
@@ -8,7 +10,12 @@ int main() {
 
         session.connect();
         session.verifyKnownhost();
-    } catch (const std::runtime_error &error) {
+
+        std::string password{};
+        std::cin >> password;
+
+        session.userauthPassword(password);
+    } catch (const SSHException &error) {
         std::cerr << error.what();
     }
 

@@ -125,11 +125,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SSHException.cpp" />
+    <ClCompile Include="SSHHashKey.cpp" />
+    <ClCompile Include="SSHHashKeyContent.cpp" />
+    <ClCompile Include="SSHHaxa.cpp" />
+    <ClCompile Include="SSHKey.cpp" />
+    <ClCompile Include="SSHKeyContent.cpp" />
+    <ClCompile Include="SSHKeyFactory.cpp" />
+    <ClCompile Include="SSHObject.cpp" />
     <ClCompile Include="SSHSesstionException.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SSHSession.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SSHException.h" />
+    <ClInclude Include="SSHHashKey.h" />
+    <ClInclude Include="SSHHashKeyContent.h" />
+    <ClInclude Include="SSHHaxa.h" />
+    <ClInclude Include="SSHKey.h" />
+    <ClInclude Include="SSHKeyContent.h" />
+    <ClInclude Include="SSHKeyFactory.h" />
+    <ClInclude Include="SSHObject.h" />
     <ClInclude Include="SSHSesstionException.h" />
     <ClInclude Include="SSHInfo.h" />
     <ClInclude Include="SSHSession.h" />

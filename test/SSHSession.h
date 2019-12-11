@@ -1,13 +1,17 @@
 #pragma once
 
-#include <libssh/libssh.h>
-#include <string>
+#include "SSHObject.h"
 #include "SSHInfo.h"
+#include "SSHKey.h"
 
-class SSHSession {
+class SSHSession : public SSHObject {
 public:
     SSHSession(const SSHInfo &info);
+    SSHSession(const SSHSession &rhs);
     ~SSHSession() noexcept;
+
+    SSHSession& operator=(const SSHSession &rhs);
+    SSHSession& operator=(SSHSession &&rhs);
 
     void setHostOption(const std::string &host);
     void setPortOption(unsigned int port);
@@ -17,14 +21,20 @@ public:
     void connect();
     void disconnect() noexcept;
 
+    void userauthPassword(std::string password);
+
     void verifyKnownhost();
+    int isKnownServer() const;
+    void updateKnownHosts();
+
+    std::string getError() const;
+
+    const ssh_session getInternal() const;
 private:
     void init();
     void free() noexcept;
 
     void throwErrorIfNotOk(int code);
-    void throwErrorIfNotOk(int code, const std::string &message);
-    void throwError(const std::string &message);
 
     ssh_session session;
     bool is_connecting;

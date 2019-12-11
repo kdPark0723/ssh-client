@@ -3,9 +3,9 @@
 
 
 SSHSesstionException::SSHSesstionException(const std::string &message)
-    : std::runtime_error(message) {
+    : SSHException(message) {
 }
 
 
-SSHSesstionException::~SSHSesstionException() {
+SSHSesstionException::~SSHSesstionException() noexcept {
 }

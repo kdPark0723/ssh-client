@@ -1,5 +1,7 @@
 #include "SSHSession.h"
 #include "SSHSesstionException.h"
+#include "SSHKeyFactory.h"
+#include "SSHHaxa.h"
 
 #include <libssh/libssh.h>
 #include <algorithm>
@@ -17,9 +19,7 @@ void processKnownHostsChanged(unsigned char *hash, size_t hlen) {
 }
 
 SSHSession::SSHSession(const SSHInfo &info)
-    : session{ nullptr },
-    is_connecting{ false } {
-
+    : SSHObject{ "SSHSessoin" }, session{ nullptr }, is_connecting{ false } {
     init();
     
     setHostOption(info.host);
@@ -32,9 +32,51 @@ SSHSession::SSHSession(const SSHInfo &info)
         setUserOption(info.user);
 }
 
+SSHSession::SSHSession(const SSHSession & rhs)
+    : SSHObject{ "SSHSessoin" }, session{ nullptr }, is_connecting{ false } {
+    init();
+    ssh_options_copy(rhs.session, &session);
+}
+
 SSHSession::~SSHSession() noexcept {
     disconnect();
     free();
+}
+
+SSHSession & SSHSession::operator=(const SSHSession & rhs) {
+    disconnect();
+    free();
+
+    init();
+    ssh_options_copy(rhs.session, &session);
+
+    return *this;
+}
+
+SSHSession & SSHSession::operator=(SSHSession && rhs) {
+    disconnect();
+    free();
+
+    is_connecting = rhs.is_connecting;
+    session = rhs.session;
+
+    rhs.is_connecting = false;
+    rhs.session = nullptr;
+
+    return *this;
+}
+
+void SSHSession::connect() {
+    throwErrorIfNotOk(ssh_connect(session));
+
+    is_connecting = true;
+}
+
+void SSHSession::disconnect() noexcept {
+    if (is_connecting)
+        ssh_disconnect(session);
+
+    is_connecting = false;
 }
 
 void SSHSession::init() {
@@ -64,123 +106,65 @@ void SSHSession::setUserOption(const std::string & user) {
 }
 
 void SSHSession::setOption(ssh_options_e type, const void * value) {
-    throwErrorIfNotOk(
+    SSHObject::throwErrorIfNotOk(
         ssh_options_set(session, type, value),
         "Cant set session's option"
     );
 }
 
-void SSHSession::connect() {
-    is_connecting = true;
-
-    throwErrorIfNotOk(ssh_connect(session));
-}
-
-void SSHSession::disconnect() noexcept {
-    if (is_connecting)
-        ssh_disconnect(session);
-
-    is_connecting = false;
+void SSHSession::userauthPassword(std::string password) {
+    throwErrorIfNotOk(ssh_userauth_password(session, nullptr, password.c_str()));
 }
 
 void SSHSession::verifyKnownhost() {
-    /*
-    enum ssh_known_hosts_e state;
-    unsigned char *hash = nullptr;
-    ssh_key srv_pubkey = nullptr;
-    size_t hlen;
-    char buf[10];
-    char *hexa;
-    char *p;
-    int cmp;
-    int rc;
+    SSHKeyFactory keyFactory{ *this };
 
-    throwErrorIfNotOK(
-        ssh_get_server_publickey(session, &srv_pubkey),
-        session
-    );
+    auto hashedPublicKey{ keyFactory.createServerPublickey().hash() };
 
-    throwErrorIfNotOK(
-        ssh_get_publickey_hash(
-            srv_pubkey,
-            SSH_PUBLICKEY_HASH_SHA1,
-            &hash,
-            &hlen
-        ),
-        session
-    );
-
-    ssh_key_free(srv_pubkey);
-
-    state = ssh_session_is_known_server(session);
-
-    auto hostUnknownError{ SSHSesstionException(
-        "The server is unknown. Do you trust the host key?\n"
-    ) };
-
-    switch (state) {
+    switch (isKnownServer()) {
     case SSH_KNOWN_HOSTS_OK:
         break;
     case SSH_KNOWN_HOSTS_CHANGED:
-        processKnownHostsChanged(hash, hlen);
+        SSHHaxa::print(hashedPublicKey);
 
+        SSHObject::throwError(
+            "Host key for server changed : it is now : \n"
+            "For security reasons, connection will be stopped\n"
+        );
     case SSH_KNOWN_HOSTS_OTHER:
-        ssh_clean_pubkey_hash(&hash);
-
-        throw SSHSesstionException(
+        SSHObject::throwError(
             "The host key for this server was not found but an other type of key exists.\n"
             "An attacker might change the default server key to confuse your client into thinking the key does not exist\n"
         );
     case SSH_KNOWN_HOSTS_NOT_FOUND:
-        throw SSHSesstionException(
+        SSHObject::throwError(
             "Could not find known host file.\n"
-            "AIf you accept the host key here, the file will be automatically created.\n"
+            "If you accept the host key here, the file will be automatically created.\n"
         );
-        
     case SSH_KNOWN_HOSTS_UNKNOWN:
-
-        hexa = ssh_get_hexa(hash, hlen);
-        
-        ssh_string_free_char(hexa);
-        ssh_clean_pubkey_hash(&hash);
-        p = fgets(buf, sizeof(buf), stdin);
-        if (p == NULL)
-            throw hostUnknownError;
-
-        std::string data{ buf };
-        std::transform(
-            data.begin(), data.end(), data.begin(),
-            [](unsigned char c) { return std::tolower(c); }
-        );
-
-        if (buf != "yes")
-            throw hostUnknownError;
-
-        rc = ssh_session_update_known_hosts(session);
-        if (rc < 0)
-            throw hostUnknownError;
-
+        updateKnownHosts();
+        break;
     case SSH_KNOWN_HOSTS_ERROR:
-        ssh_clean_pubkey_hash(&hash);
-
-        throw SSHSesstionException(
-            ssh_get_error(session)
-        );
+        SSHObject::throwError(getError());
     }
-    ssh_clean_pubkey_hash(&hash);*/
+}
+
+int SSHSession::isKnownServer() const {
+    return ssh_is_server_known(session);
+}
+
+void SSHSession::updateKnownHosts() {
+    throwErrorIfNotOk(ssh_session_update_known_hosts(session));
+}
+
+std::string SSHSession::getError() const {
+    return ssh_get_error(session);
+}
+
+const ssh_session SSHSession::getInternal() const {
+    return session;
 }
 
 void SSHSession::throwErrorIfNotOk(int code) {
-    if (code != SSH_OK)
-        throwError(ssh_get_error(session));
-}
-
-void SSHSession::throwErrorIfNotOk(int code, const std::string & message) {
-    if (code != SSH_OK)
-        throwError(message);
-}
-
-void SSHSession::throwError(const std::string & message)
-{
-    throw SSHSesstionException(std::string{ "SSHSession: " } + message);
+    SSHObject::throwErrorIfNotOk(code, getError());
 }

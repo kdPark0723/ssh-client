@@ -1,10 +1,10 @@
 #pragma once
 
-#include <stdexcept>
+#include "SSHException.h"
 
-class SSHSesstionException : public std::runtime_error {
+class SSHSesstionException : public SSHException {
 public:
     SSHSesstionException(const std::string &message);
-    ~SSHSesstionException();
+    ~SSHSesstionException() noexcept;
 };
 
