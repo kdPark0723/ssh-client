@@ -54,7 +54,9 @@ void DialogInsert::OnClickedButtonInsert()
 	GetDlgItemText(IDC_EDIT_USERNAME, cUsername);
 	GetDlgItemText(IDC_EDIT_IP, cIp);
 	
-	SSHInfo info{ convertCstringToString(cIp), 22, convertCstringToString(cUsername) };
+	SSHInfo info{};
+	info.host = convertCstringToString(cIp);
+	info.user = convertCstringToString(cUsername);
 
 	pDoc->m_ssh_infos.push_back(info);
 	pView->UpdateButtons();

@@ -161,10 +161,6 @@ void CsshclientApp::OnAppAbout()
 
 // CsshclientApp 메시지 처리기
 
-
-
-
-
 BOOL CAboutDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();

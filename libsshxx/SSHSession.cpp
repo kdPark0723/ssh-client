@@ -23,7 +23,7 @@ SSHSession::SSHSession(const SSHInfo &info)
     init();
     
     setHostOption(info.host);
-    setPortOption(info.port)
+    setPortOption(info.port);
 
     if (!info.user.empty())
         setUserOption(info.user);
@@ -91,29 +91,43 @@ void SSHSession::free() noexcept {
 }
 
 void SSHSession::setHostOption(const std::string & host) {
-    setOption(SSH_OPTIONS_HOST, host.c_str());
+    setOptions(SSH_OPTIONS_HOST, host.c_str());
 }
 
 void SSHSession::setPortOption(unsigned int port) {
-    setOption(SSH_OPTIONS_PORT, &port);
+    setOptions(SSH_OPTIONS_PORT, &port);
 }
 
 void SSHSession::setUserOption(const std::string & user) {
-    setOption(SSH_OPTIONS_USER, user.c_str());
+    setOptions(SSH_OPTIONS_USER, user.c_str());
 }
 
-void SSHSession::setSSHDIrOptionDefault() {
-    setOption(SSH_OPTIONS_SSH_DIR, nullptr);
+void SSHSession::setSSHDIrOption() {
+    setOptions(SSH_OPTIONS_SSH_DIR, nullptr);
 }
 
 void SSHSession::setSSHDIrOption(const std::string & dir) {
-    setOption(SSH_OPTIONS_SSH_DIR, dir.c_str());
+    setOptions(SSH_OPTIONS_SSH_DIR, dir.c_str());
 }
 
-void SSHSession::setOption(ssh_options_e type, const void * value) {
+void SSHSession::setOptions(ssh_options_e type, const void * value) {
     SSHObject::throwErrorIfNotOk(
         ssh_options_set(session, type, value),
         "Cant set session's option"
+    );
+}
+
+void SSHSession::optionsParseConfig() {
+    SSHObject::throwErrorIfNotOk(
+        ssh_options_parse_config(session, nullptr),
+        "Cant options parse config"
+    );
+}
+
+void SSHSession::optionsParseConfig(const std::string & config) {
+    SSHObject::throwErrorIfNotOk(
+        ssh_options_parse_config(session, config.c_str()),
+        "Cant options parse config"
     );
 }
 
@@ -122,6 +136,7 @@ void SSHSession::userauthPassword(std::string password) {
 }
 
 void SSHSession::verifyKnownhost() {
+    /*
     SSHKeyFactory keyFactory{ *this };
 
     auto hashedPublicKey{ keyFactory.createServerPublickey().hash() };
@@ -151,7 +166,7 @@ void SSHSession::verifyKnownhost() {
         break;
     case SSH_KNOWN_HOSTS_ERROR:
         SSHObject::throwError(getError());
-    }
+    }*/
 }
 
 int SSHSession::isKnownServer() const {
@@ -159,7 +174,7 @@ int SSHSession::isKnownServer() const {
 }
 
 void SSHSession::updateKnownHosts() {
-    throwErrorIfNotOk(ssh_session_update_known_hosts(session));
+    //throwErrorIfNotOk(ssh_session_update_known_hosts(session));
 }
 
 std::string SSHSession::getError() const {

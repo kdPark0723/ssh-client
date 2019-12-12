@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.902
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ssh-client", "ssh-client.vcxproj", "{59B32439-62CF-41A2-A7D0-A1AE853486B7}"
 EndProject
@@ -15,6 +15,7 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{59B32439-62CF-41A2-A7D0-A1AE853486B7}.Debug|x64.ActiveCfg = Debug|x64
 		{59B32439-62CF-41A2-A7D0-A1AE853486B7}.Debug|x64.Build.0 = Debug|x64
+		{59B32439-62CF-41A2-A7D0-A1AE853486B7}.Debug|x64.Deploy.0 = Debug|x64
 		{59B32439-62CF-41A2-A7D0-A1AE853486B7}.Debug|x86.ActiveCfg = Debug|Win32
 		{59B32439-62CF-41A2-A7D0-A1AE853486B7}.Debug|x86.Build.0 = Debug|Win32
 		{59B32439-62CF-41A2-A7D0-A1AE853486B7}.Release|x64.ActiveCfg = Release|x64

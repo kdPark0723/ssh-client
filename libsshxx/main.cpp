@@ -5,6 +5,10 @@
 #include "SSHChanner.h"
 #include "SSHException.h"
 
+
+// $(SolutionDir)..\libssh\include
+// $(SolutionDir)..\libssh\lib\x86
+// $(SolutionDir)..\libssh\lib\x64
 int main() {
     try {
         std::cout << "Input host: ";
@@ -18,7 +22,7 @@ int main() {
         SSHSession session{ SSHInfo{host, 22, username} };
 
         // 오류 발생 지점
-        session.setSSHDIrOptionDefault();
+        session.optionsParseConfig("./.ssh");
 
         session.connect();
         session.verifyKnownhost();

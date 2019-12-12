@@ -11,10 +11,17 @@ public:
     void open();
     void close() noexcept;
 
+    void requestPty();
+    void changePtySize(int cols, int rows);
+
     std::string requestAndGetResult(const std::string &request);
     void requestExec(const std::string &request);
+    void requestShell();
+
     std::string read();
+
     void sendEof();
+	bool isEof() const;
 
 private:
     void init(const SSHSession & session);

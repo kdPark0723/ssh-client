@@ -104,11 +104,11 @@ void SSHSession::setUserOption(const std::string & user) {
     setOption(SSH_OPTIONS_USER, user.c_str());
 }
 
-void SSHSession::setSSHDIrOptionDefault() {
+void SSHSession::setSSHDirOption() {
     setOption(SSH_OPTIONS_SSH_DIR, nullptr);
 }
 
-void SSHSession::setSSHDIrOption(const std::string & dir) {
+void SSHSession::setSSHDirOption(const std::string & dir) {
     setOption(SSH_OPTIONS_SSH_DIR, dir.c_str());
 }
 

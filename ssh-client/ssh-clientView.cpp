@@ -142,6 +142,8 @@ bool CsshclientView::InitSshSecction()
 
     m_ssh_session = new SSHSession{ m_tab_sshInfos[id] };
 
+	m_ssh_session->setSSHDirOption(".");
+
     m_ssh_session->connect();
     m_ssh_session->verifyKnownhost();
 
