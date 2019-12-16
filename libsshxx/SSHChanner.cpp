@@ -4,7 +4,7 @@
 
 
 SSHChanner::SSHChanner(const SSHSession & session)
-    : SSHObject{ "SSHChanner" }, channel{ nullptr }, is_open{ false } {
+    : SSHObject{ "SSHChanner" }, channel{ nullptr }, timeout_millisecond{ 1000 } {
     init(session);
 }
 
@@ -18,18 +18,39 @@ void SSHChanner::open() {
         ssh_channel_open_session(channel),
         "Cant open channel"
     );
+}
 
-    is_open = true;
+bool SSHChanner::isOpen() const {
+    return ssh_channel_is_open(channel);
 }
 
 void SSHChanner::close() noexcept {
-    if (is_open)
+    if (isOpen())
         ssh_channel_close(channel);
-    is_open = false;
 }
 
-std::string SSHChanner::reuestAndGetResult(const std::string & request)
-{
+void SSHChanner::requestPty() {
+    throwErrorIfNotOk(
+        ssh_channel_request_pty(channel),
+        "Cant request pty"
+    );
+}
+
+void SSHChanner::changePtySize(int rows, int cols) {
+    throwErrorIfNotOk(
+        ssh_channel_change_pty_size(channel, rows, cols),
+        "Cant change pty size"
+    );
+}
+
+void SSHChanner::requestShell() {
+    throwErrorIfNotOk(
+        ssh_channel_request_shell(channel),
+        "Cant change pty size"
+    );
+}
+
+std::string SSHChanner::reuestAndGetResult(const std::string & request) {
     requestExec(request);
 
     auto result{ read() };
@@ -50,20 +71,27 @@ std::string SSHChanner::read() {
     int nbytes;
 
     std::stringstream stream{};
-    nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), 0);
-    while (nbytes > 0) {
-        stream << buffer;
+    while (!isEof()) {
+        nbytes = ssh_channel_read_timeout(channel, buffer, sizeof(buffer), 0, timeout_millisecond);
+        if (nbytes <= 0)
+            break;
 
-        nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), 0);
-    }
-    if (nbytes < 0)
-        throwError("Cant read");
+        stream << buffer;
+    }        
 
     return stream.str();
 }
 
+void SSHChanner::write(const std::string &data) {
+    ssh_channel_write(channel, data.c_str(), data.size());
+}
+
 void SSHChanner::sendEof() {
     ssh_channel_send_eof(channel);
+}
+
+bool SSHChanner::isEof() const {
+    return ssh_channel_is_eof(channel);
 }
 
 void SSHChanner::init(const SSHSession & session) {

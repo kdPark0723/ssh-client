@@ -21,8 +21,9 @@ int main() {
 
         SSHSession session{ SSHInfo{host, 22, username} };
 
-        // 오류 발생 지점
-        session.optionsParseConfig("./.ssh");
+        session.setBlocking(true);
+
+        session.setSSHDirOption(".");
 
         session.connect();
         session.verifyKnownhost();
@@ -33,15 +34,20 @@ int main() {
 
         session.userauthPassword(password);
 
-        SSHChanner channer{ session };
-        channer.open();
-
-        std::cout << "Input request: ";
         std::string request{};
-        std::cin >> request;
+        while (true) {
+            SSHChanner channel{ session };
+            channel.open();
 
-        auto result{ channer.reuestAndGetResult(request) };
-        std::cout << result;
+            std::cout << "Input request: ";
+            std::cin >> request;
+
+            if (request == "exit")
+                return 0;
+
+            auto result{ channel.reuestAndGetResult(request) };
+            std::cout << result << "\n";
+        }
     } catch (const SSHException &error) {
         std::cerr << error.what();
     }

@@ -63,6 +63,10 @@ SSHSession & SSHSession::operator=(SSHSession && rhs) {
     return *this;
 }
 
+void SSHSession::setBlocking(bool blocking) {
+    ssh_set_blocking(session, blocking);
+}
+
 void SSHSession::connect() {
     throwErrorIfNotOk(ssh_connect(session));
 
@@ -102,11 +106,11 @@ void SSHSession::setUserOption(const std::string & user) {
     setOptions(SSH_OPTIONS_USER, user.c_str());
 }
 
-void SSHSession::setSSHDIrOption() {
+void SSHSession::setSSHDirOption() {
     setOptions(SSH_OPTIONS_SSH_DIR, nullptr);
 }
 
-void SSHSession::setSSHDIrOption(const std::string & dir) {
+void SSHSession::setSSHDirOption(const std::string & dir) {
     setOptions(SSH_OPTIONS_SSH_DIR, dir.c_str());
 }
 

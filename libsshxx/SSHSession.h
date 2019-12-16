@@ -13,11 +13,13 @@ public:
     SSHSession& operator=(const SSHSession &rhs);
     SSHSession& operator=(SSHSession &&rhs);
 
+    void setBlocking(bool blocking);
+
     void setHostOption(const std::string &host);
     void setPortOption(unsigned int port);
     void setUserOption(const std::string &user);
-    void setSSHDIrOption();
-    void setSSHDIrOption(const std::string &dir);
+    void setSSHDirOption();
+    void setSSHDirOption(const std::string &dir);
 
     void setOptions(enum ssh_options_e type, const void *value);
 
