@@ -3,31 +3,34 @@
 #include "SSHObject.h"
 #include "SSHSession.h"
 
-class SSHChanner: public SSHObject {
+class SSHChanner : public SSHObject {
 public:
     SSHChanner(const SSHSession& session);
     ~SSHChanner();
 
     void open();
+    bool isOpen() const;
+
     void close() noexcept;
 
     void requestPty();
-    void changePtySize(int cols, int rows);
-
-    std::string requestAndGetResult(const std::string &request);
-    void requestExec(const std::string &request);
+    void changePtySize(int rows, int cols);
     void requestShell();
 
+    std::string reuestAndGetResult(const std::string &request);
+    void requestExec(const std::string &request);
+
     std::string read();
+    void write(const std::string &);
 
     void sendEof();
-	bool isEof() const;
+    bool isEof() const;
 
 private:
     void init(const SSHSession & session);
     void free() noexcept;
 
     ssh_channel channel;
-    bool is_open;
+    int timeout_millisecond;
 };
 

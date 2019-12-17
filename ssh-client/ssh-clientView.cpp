@@ -234,7 +234,7 @@ void CsshclientView::OnBnClickedSshInputButton()
         SSHChanner channer{ *m_ssh_session };
         channer.open();
 
-        m_ssh_console_out = CString{ channer.requestAndGetResult(convertCstringToString(m_ssh_console_in)).c_str() };
+        m_ssh_console_out = CString{ channer.reuestAndGetResult(convertCstringToString(m_ssh_console_in)).c_str() };
         m_ssh_console_in = _T("");
     }
     catch (const SSHException &err) {
